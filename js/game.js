@@ -14,13 +14,21 @@ fg.src = 'img/fg.png';
 pipeUp.src = 'img/pipeUp.png';
 pipeBottom.src = 'img/pipeBottom.png';
 
+// sounds
+var fly = new Audio();
+var scoreAudio = new Audio();
+
+fly.src = 'audio/fly.mp3';
+scoreAudio.src = 'audio/score.mp3';
+
 var gap = 90;
 
 // if user push any button
 document.addEventListener('keydown', moveUp);
 
 function moveUp() {
-  yPos -= 20;
+  yPos -= 27;
+  fly.play();
 }
 
 // blocks creating
@@ -29,6 +37,8 @@ pipe[0] = {
   x : cvs.width,
   y : 0
 }
+
+var score = 0;
 
 // position of a bird
 var xPos = 10;
@@ -55,10 +65,14 @@ function draw() {
     if(xPos + bird.width >= pipe[i].x
       && xPos <= pipe[i].x + pipeUp.width
       && (yPos <=pipe[i].y + pipeUp.height
-        || yPos + bird.height >= pipe[i].y + pipeUp.height + gap)) {
+        || yPos + bird.height >= pipe[i].y + pipeUp.height + gap) || yPos + bird.height >= cvs.height - fg.height) {
           location.reload(); /* page reload */
         }
 
+    if(pipe[i].x == 5) {
+      score++;
+      scoreAudio.play();
+    }
 
   }
 
@@ -67,7 +81,14 @@ function draw() {
   ctx.drawImage(bird, xPos, yPos);
 
   yPos += grav;
+
+  ctx.fillStyle = '#000';
+  ctx.font = '24px Arial';
+  ctx.fillText('Score:' + score, 10, cvs.height - 20);
+
   requestAnimationFrame(draw);
 }
+
+
 
 pipeBottom.onload = draw;
